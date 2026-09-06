@@ -27,7 +27,6 @@ services:
     security_opt:
       - no-new-privileges:true
     mem_limit: "${WATCHTOWER_MEMORY_LIMIT:-256m}"
-    cpus: "${WATCHTOWER_CPU_LIMIT:-0.25}"
     labels:
       com.ambitiouscake.managed-by: "portainer-gitops"
       com.ambitiouscake.environment: "${ENVIRONMENT_NAME:-production}"
