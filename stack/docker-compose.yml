@@ -1,0 +1,36 @@
+---
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+    tag: "{{.Name}}"
+
+services:
+  watchtower:
+    image: 'containrrr/watchtower:latest'
+    container_name: watchtower
+    environment:
+      - TZ=${TZ:-Australia/Sydney}
+      # Watchtower cron uses six fields. Default: daily at 06:00.
+      - WATCHTOWER_SCHEDULE=${WATCHTOWER_SCHEDULE:-0 0 6 * * *}
+      # GitOps owns deployment. Watchtower only reports newer labelled images.
+      - WATCHTOWER_MONITOR_ONLY=true
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_NO_STARTUP_MESSAGE=true
+      - WATCHTOWER_NOTIFICATION_REPORT=true
+      - WATCHTOWER_NOTIFICATION_URL=${WATCHTOWER_NOTIFICATION_URL:-}
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+    restart: unless-stopped
+    logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: "${WATCHTOWER_MEMORY_LIMIT:-256m}"
+    cpus: "${WATCHTOWER_CPU_LIMIT:-0.25}"
+    labels:
+      com.ambitiouscake.managed-by: "portainer-gitops"
+      com.ambitiouscake.environment: "${ENVIRONMENT_NAME:-production}"
+      com.ambitiouscake.stack: "watchtower"
+      # Allow this instance to report updates for its own image too.
+      com.centurylinklabs.watchtower.enable: "true"
