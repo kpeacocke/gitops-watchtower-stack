@@ -23,6 +23,12 @@ services:
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/watchtower", "--version"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     logging: *default-logging
     security_opt:
       - no-new-privileges:true
