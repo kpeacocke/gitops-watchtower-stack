@@ -24,7 +24,7 @@ services:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "/watchtower", "--version"]
+      test: ["CMD", "/watchtower", "--help"]
       interval: 60s
       timeout: 10s
       retries: 3
